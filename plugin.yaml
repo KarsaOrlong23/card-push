@@ -1,0 +1,59 @@
+name: card-push
+label: Card push
+kind: plugin
+version: 1.0.0
+author: Hermes Plugin Contributors
+homepage: https://github.com/NousResearch/hermes-agent
+description: >
+  Card push: lightweight knowledge auto-injection before each agent turn.
+  Extracts keywords from the latest user message, queries a QMD search index,
+  and injects the top matching documents into context — push instead of pull,
+  so knowledge delivery does not depend on the agent remembering to look it up.
+  Fail-silent on timeout; configurable stop-words and sensitive-item filter;
+  receipt log per profile. Tenants/collections are opt-in via environment,
+  with no hardcoded defaults.
+requires_hermes: ">=0.21.5"
+provides_hooks:
+  - pre_llm_call
+requires_env:
+  - name: CARD_PUSH_QMD
+    description: "Path to the qmd binary (e.g. /usr/local/bin/qmd). If unset, searches PATH."
+    prompt: "qmd binary path"
+    password: false
+optional_env:
+  - name: CARD_PUSH_COLLECTIONS
+    description: "Comma-separated list of QMD collections to search by default. Required unless CARD_PUSH_COLLECTIONS_FILE is set."
+    prompt: "Default QMD collections to search"
+    password: false
+  - name: CARD_PUSH_COLLECTIONS_FILE
+    description: "File containing collection names (one per line) to search by default, used as alternative to CARD_PUSH_COLLECTIONS."
+    prompt: "File with default QMD collections"
+    password: false
+  - name: CARD_PUSH_INDEX
+    description: "XDG_CACHE_HOME / index location for qmd (default: environment XDG_CACHE_HOME)."
+    prompt: "qmd index cache dir"
+    password: false
+  - name: CARD_PUSH_RELEASE_FILE
+    description: "Path to release file; one line with an additional collection slug (e.g. tenant-prod). Empty/missing = only default collections."
+    prompt: "Tenant release file"
+    password: false
+  - name: CARD_PUSH_STOPWORDS
+    description: "Comma-separated stop-words to filter from keywords (default: English+German function words)."
+    prompt: "Stop-words"
+    password: false
+  - name: CARD_PUSH_SENSITIVE
+    description: "Regex pattern for sensitive document IDs to never inject (default: blocks b-71, b-72, b-100, b-101, b-102)."
+    prompt: "Sensitive-item regex"
+    password: false
+  - name: CARD_PUSH_MAX_HITS
+    description: "Maximum number of results to inject (default: 5)."
+    prompt: "Max results to inject"
+    password: false
+  - name: CARD_PUSH_TIMEOUT
+    description: "Timeout in seconds for the QMD search subprocess (default: 4)."
+    prompt: "Search timeout seconds"
+    password: false
+  - name: CARD_PUSH_INJECT_FORMAT
+    description: "Format string for injected context block. {head}, {body}, {tail} placeholders. If unset, uses a generic default."
+    prompt: "Inject format template"
+    password: false
